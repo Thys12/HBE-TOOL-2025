@@ -4,192 +4,244 @@ import os
 import plotly.graph_objects as go
 import plotly.express as px
 
-st.title("🎈 Hernieuwbare Brandstof Eenheden")
-st.write(
-    """### Welke regels gelden voor het aantonen van levering van 100% hernieuwbare elektriciteit aan vervoer?
+st.title("Hernieuwbare Brandstof Eenheden")
+st.markdown("""
+### Wat zijn Hernieuwbare Brandstof Eenheden (HBE's)?
 
-Alleen elektriciteit die aan vervoer is geleverd, wordt beloond met HBE’s. Hernieuwbare elektriciteit die is terug geleverd aan het net of aan andere installaties op de aansluiting, komt niet in aanmerking voor HBE’s.
+Hernieuwbare Brandstof Eenheden (HBE's) zijn digitale certificaten die worden gebruikt om de productie en het gebruik van hernieuwbare energie te bevorderen, specifiek binnen de transportsector. In Nederland vallen deze certificaten onder het systeem van de **Wet milieubeheer** en de **Europese Richtlijn Hernieuwbare Energie (RED II)**. Ze fungeren als bewijs dat een bepaalde hoeveelheid hernieuwbare energie, zoals biobrandstof, waterstof of elektriciteit, is geproduceerd of gebruikt. Bedrijven kunnen HBE's verhandelen om te voldoen aan hun verplichtingen voor de inzet van hernieuwbare energie en om bij te dragen aan de vermindering van CO₂-uitstoot.
+""")
 
-De inboeker moet door middel van meetgegevens aantonen hoeveel elektriciteit er is opgewekt en dat de opgewekte elektriciteit daadwerkelijk naar vervoer is gegaan. Voor de meters die de opwek van hernieuwbare elektriciteit meten, zijn momenteel geen aparte vereisten opgenomen in de regelgeving.
+# Sectie over HBE-O Elektriciteit
+st.markdown("""
+### Wat is HBE-O Elektriciteit?
 
-- Indien de opwekinstallatie ook is aangesloten op andere installaties of aan het net teruglevert, dient de inboeker per tijdsinterval van één uur (of nauwkeuriger) gelijktijdigheid van opwek/ levering aan vervoer aan te tonen.
-- Indien er gebruik gemaakt wordt van tussentijdse batterijopslag die niet is aangesloten op het net of aan andere installaties levert, kan de inboeker aantonen dat hernieuwbare elektriciteit de batterij in ging en vervolgens op een later moment aan vervoer is geleverd.
-- Indien er gebruik gemaakt wordt van een batterij die ook op het net en/of ander verbruik is aangesloten, kan de levering als 100% hernieuwbaar worden ingeboekt als op uurbasis wordt bijgehouden welk deel van de inhoud van de batterij bestaat uit opgewekte hernieuwbare elektriciteit en ook aan vervoer is geleverd. Zie onderstaand voorbeeld.
+Binnen het HBE-systeem is er een specifieke categorie voor elektriciteit: **HBE-O Elektriciteit** (Hernieuwbare Brandstof Eenheden - Overig Elektriciteit). Dit type HBE is gericht op de bevordering van hernieuwbare elektriciteit die wordt gebruikt in elektrische voertuigen (EV's) voor transportdoeleinden. Het idee is om de transitie naar elektrisch rijden te ondersteunen door producenten en leveranciers van hernieuwbare elektriciteit te belonen met HBE's, die zij vervolgens kunnen verhandelen.
+""")
 
-![alt text](<Schermafbeelding 2024-08-09 093717.png>)
+# Uitleg over de werking van HBE-O Elektriciteit
+st.markdown("""
+### Hoe werkt HBE-O Elektriciteit?
 
-nboeken voor deze situatie kan als volgt:
+1. **Productie van Hernieuwbare Elektriciteit**: Elektriciteit die wordt opgewekt uit hernieuwbare bronnen zoals wind, zon, waterkracht of biomassa komt in aanmerking voor HBE's. Elektriciteitsproducenten kunnen hun duurzame energieproductie aanmelden bij de Nederlandse Emissieautoriteit (NEa) om in aanmerking te komen voor HBE-O Elektriciteit.
 
-- De zonne-elektriciteit (100% hernieuwbaar) die direct geleverd wordt aan vervoer, mag voor 100% hernieuwbaar worden ingeboekt, waarbij gelijktijdigheid op uurbasis (of nauwkeuriger) moet kunnen worden aangetoond..
-- De netstroom geleverd aan vervoer mag worden ingeboekt voor het netgemiddelde.
-- Om de levering van de batterij naar vervoer (D) gedeeltelijk als 100% hernieuwbaar te kunnen inboeken, zullen per uur ook alle overige stromen die de batterij in en uitgaan (A, B en C) gemeten moeten worden. Dit om te bepalen welk aandeel in de batterij hernieuwbaar is. (Indien dat niet mogelijk is kan D als netstroom ingeboekt worden.)
-Per uur moet bijgehouden worden wat de energiemix (groen/grijs) in de batterij is. Binnen dat uur mag het groene gedeelte in de batterij worden gealloceerd aan stroom D. De hoeveelheid in een uur ingeboekte 100% hernieuwbare elektriciteit kan nooit meer zijn dan wat er in dat uur daadwerkelijk aan vervoer is geleverd."""
-)
+2. **Toekenning van HBE's**: Voor elke eenheid (bijvoorbeeld megawattuur, MWh) hernieuwbare elektriciteit die wordt geleverd aan elektrische voertuigen, ontvangen de producenten HBE-O Elektriciteit. Deze eenheden kunnen worden toegekend aan laadstations, leveranciers van stroom aan EV's, of partijen die betrokken zijn bij de opslag en distributie van elektriciteit voor transport.
+
+3. **Handel in HBE's**: Net als andere HBE's kunnen HBE-O Elektriciteit-certificaten worden verhandeld op de markt. Bedrijven zoals olie- en gasmaatschappijen, die wettelijk verplicht zijn om een bepaald percentage hernieuwbare energie in hun brandstofmix te hebben, kunnen deze certificaten kopen om te voldoen aan hun verplichtingen.
+
+4. **Stimulering van Elektrisch Rijden**: Het verkrijgen van HBE-O Elektriciteit moedigt investeringen aan in hernieuwbare energie-infrastructuur, zoals laadpalen en slimme netwerken, die nodig zijn om de groei van elektrisch rijden te ondersteunen.
+""")
+
+# Mogelijkheden voor het gebruik van HBE-O Elektriciteit
+st.markdown("""
+### Wat kun je doen met HBE-O Elektriciteit?
+
+- **Voor Producenten van Hernieuwbare Elektriciteit**: Deze producenten, zoals exploitanten van wind- en zonneparken, kunnen extra inkomsten genereren door HBE-O Elektriciteit te verkrijgen voor de hernieuwbare elektriciteit die ze leveren aan de transportsector. Dit maakt investeringen in duurzame energiebronnen aantrekkelijker.
+
+- **Voor Exploitanten van Laadinfrastructuur**: Bedrijven die laadstations exploiteren en elektriciteit leveren aan EV's kunnen HBE-O Elektriciteit verkrijgen en verhandelen, wat een extra inkomstenstroom biedt. Dit helpt bij het verbeteren van de rentabiliteit van investeringen in laadinfrastructuur.
+
+- **Voor Brandstofleveranciers en Energiebedrijven**: Bedrijven die fossiele brandstoffen leveren, kunnen HBE-O Elektriciteit kopen om hun verplichtingen met betrekking tot hernieuwbare energie in transport na te komen. Dit biedt flexibiliteit en stimuleert hen om bij te dragen aan de elektrificatie van transport.
+
+- **Voor Overheden en Beleidsmakers**: HBE-O Elektriciteit speelt een sleutelrol in het behalen van nationale en Europese doelstellingen voor emissiereductie en verduurzaming van de transportsector.
+""")
+
+# Conclusie
+st.markdown("""
+### Conclusie
+
+HBE-O Elektriciteit is een belangrijk instrument binnen het HBE-systeem dat specifiek gericht is op de promotie van hernieuwbare elektriciteit voor de transportsector. Het stimuleert zowel de productie van hernieuwbare elektriciteit als de uitrol van elektrische voertuigen en laadinfrastructuur. Door het creëren van een markt voor hernieuwbare energie in transport kunnen producenten, leveranciers, en beleidsmakers gezamenlijk werken aan een duurzamere toekomst.
+""")
 
 
+# File uploader
+uploaded_file = st.file_uploader("Kies een bestand")
 
-
-uploaded_file = st.file_uploader("Choose a file")
+# If a file is uploaded, proceed with processing
 if uploaded_file is not None:
-
-    # Can be used wherever a "file-like" object is accepted:
+    # Read the file into a dataframe
     dataframe = pd.read_excel(uploaded_file)
     st.write(dataframe)
 
 # Pivot the data
-pivot_df = dataframe.pivot_table(
-    index=[ 'Tijdstip'], 
-    columns=['Meetpunt','Kanaal'], values='Waarde').reset_index()
-
-# Display the transformed data
-pivot_df
-
-# Kolomen verwijzen
-kolom_Tijdstip = pivot_df[('Tijdstip', '')]
-kolom_Windturbines = pivot_df[('Bruto Opwek Micro-Windturbines', 'Elektra Teruglevering (kWh)')]
-kolom_Zonnepark = pivot_df[('Bruto Opwek PV 1', 'Elektra Teruglevering (kWh)')]
-kolom_Laadpalenauto = pivot_df[('Laadpalen Cars','Elektra verbruik (kWh)')]
-kolom_Net_Teruglevering = pivot_df[('Primair Allocatiepunt (PAP)', 'Elektra Teruglevering (kWh)')]
-kolom_Net_Verbruik = pivot_df[('Primair Allocatiepunt (PAP)','Elektra verbruik (kWh)')]
-kolom_Batterij_Teruglevering = pivot_df[( 'Secundair Allocatiepunt (SAP)', 'Elektra Teruglevering (kWh)')]
-kolom_Batterij_Verbruik = pivot_df[( 'Secundair Allocatiepunt (SAP)','Elektra verbruik (kWh)')]
-kolom_LaadpalenTrucks = pivot_df[('laadpalen trucks','Elektra verbruik (kWh)')]
+    pivot_df = dataframe.pivot_table(
+        index=[ 'Tijdstip'], 
+        columns=['Meetpunt','Kanaal'], values='Waarde').reset_index()
+    st.write(pivot_df)
 
 
-def verbruik_gebouw(row):
-    # Berekeningen voor verbruik en teruglevering
-    Verbruik = row['Net_Verbruik'] - row['Batterij_Verbruik']
-    Teruglevering = row["Batterij_Teruglevering"] - row["Net_Teruglevering"]
-    GroeneStroom = row["Groene_Stroom"]
-    Laadpalen = row["laadpalen"]
-
-    if Verbruik <= 0 and Teruglevering <= 0:
-        VerbruikGebouw = GroeneStroom - abs(Verbruik) - abs(Teruglevering) - Laadpalen
-    elif Verbruik <= 0 and Teruglevering > 0:
-        VerbruikGebouw = GroeneStroom - abs(Verbruik) + abs(Teruglevering) - Laadpalen
-    elif Verbruik > 0 and Teruglevering <= 0:
-        VerbruikGebouw = GroeneStroom + abs(Verbruik) - abs(Teruglevering) - Laadpalen
-    else:  # Verbruik > 0 and Teruglevering > 0
-        VerbruikGebouw = GroeneStroom + abs(Verbruik) + abs(Teruglevering) - Laadpalen
-
-    return VerbruikGebouw
-
-# Combineer deze kolommen in een nieuwe DataFrame
-df = pd.DataFrame({
-    'Tijdstip': kolom_Tijdstip,
-    'Windturbines': kolom_Windturbines.values,
-    'Zonnepark': kolom_Zonnepark.values,
-    'Laadpalenauto': kolom_Laadpalenauto.values,
-    'Laadpalen_Trucks': kolom_LaadpalenTrucks.values,
-    'Net_Teruglevering': kolom_Net_Teruglevering.values,
-    'Net_Verbruik': kolom_Net_Verbruik.values,
-    'Batterij_Teruglevering': kolom_Batterij_Teruglevering.values,
-    'Batterij_Verbruik': kolom_Batterij_Verbruik.values
-    
-})
-
-df.set_index(['Tijdstip'],inplace=True)
-
-df["Groene_Stroom"] = df["Windturbines"]+ df["Zonnepark"]
-df["laadpalen"] = df["Laadpalenauto"]+ df["Laadpalen_Trucks"]
-df["Verbruik"] = (df["Batterij_Verbruik"] - df["Net_Verbruik"])
-df["Levering"] = (df["Batterij_Teruglevering"] - df["Net_Teruglevering"])
-
-# Apply the function to the DataFrame
-df['Verbruik_Gebouw'] = df.apply(verbruik_gebouw, axis=1)
+    # Kolomen verwijzen
+    kolom_Tijdstip = pivot_df[('Tijdstip', '')]
+    kolom_Windturbines = pivot_df[('Bruto Opwek Micro-Windturbines', 'Elektra Teruglevering (kWh)')]
+    kolom_Zonnepark = pivot_df[('Bruto Opwek PV 1', 'Elektra Teruglevering (kWh)')]
+    kolom_Laadpalenauto = pivot_df[('Laadpalen Cars','Elektra verbruik (kWh)')]
+    kolom_Net_Teruglevering = pivot_df[('Primair Allocatiepunt (PAP)', 'Elektra Teruglevering (kWh)')]
+    kolom_Net_Verbruik = pivot_df[('Primair Allocatiepunt (PAP)','Elektra verbruik (kWh)')]
+    kolom_Batterij_Teruglevering = pivot_df[( 'Secundair Allocatiepunt (SAP)', 'Elektra Teruglevering (kWh)')]
+    kolom_Batterij_Verbruik = pivot_df[( 'Secundair Allocatiepunt (SAP)','Elektra verbruik (kWh)')]
+    kolom_LaadpalenTrucks = pivot_df[('laadpalen trucks','Elektra verbruik (kWh)')]
 
 
+    def verbruik_gebouw(row):
+        # Berekeningen voor verbruik en teruglevering
+        Verbruik = row['Net_Verbruik'] - row['Batterij_Verbruik']
+        Teruglevering = row["Batterij_Teruglevering"] - row["Net_Teruglevering"]
+        GroeneStroom = row["Groene_Stroom"]
+        Laadpalen = row["laadpalen"]
 
-# Maak de figuur
-fig = go.Figure()
+        if Verbruik <= 0 and Teruglevering <= 0:
+            VerbruikGebouw = GroeneStroom - abs(Verbruik) - abs(Teruglevering) - Laadpalen
+        elif Verbruik <= 0 and Teruglevering > 0:
+            VerbruikGebouw = GroeneStroom - abs(Verbruik) + abs(Teruglevering) - Laadpalen
+        elif Verbruik > 0 and Teruglevering <= 0:
+            VerbruikGebouw = GroeneStroom + abs(Verbruik) - abs(Teruglevering) - Laadpalen
+        else:  # Verbruik > 0 and Teruglevering > 0
+            VerbruikGebouw = GroeneStroom + abs(Verbruik) + abs(Teruglevering) - Laadpalen
 
-# Voeg elke lijn toe aan de figuur
-for column in df.columns[6:13]:
-    fig.add_trace(go.Scatter(x=df.index, y=df[column], mode='lines', name=column))
+        return VerbruikGebouw
 
-# Figuur titel en labels
-fig.update_layout(title='Lijn plot van meerdere variabelen over de tijd',
-                  xaxis_title='Tijd',
-                  yaxis_title='kWh')
+    # Combineer deze kolommen in een nieuwe DataFrame
+    df = pd.DataFrame({
+        'Tijdstip': kolom_Tijdstip,
+        'Windturbines': kolom_Windturbines.values,
+        'Zonnepark': kolom_Zonnepark.values,
+        'Laadpalenauto': kolom_Laadpalenauto.values,
+        'Laadpalen_Trucks': kolom_LaadpalenTrucks.values,
+        'Net_Teruglevering': kolom_Net_Teruglevering.values,
+        'Net_Verbruik': kolom_Net_Verbruik.values,
+        'Batterij_Teruglevering': kolom_Batterij_Teruglevering.values,
+        'Batterij_Verbruik': kolom_Batterij_Verbruik.values
+        
+    })
 
-st.write(fig)
+    df.set_index(['Tijdstip'],inplace=True)
 
-st.write(""" ## HBE berekenen
+    df["Groene_Stroom"] = df["Windturbines"]+ df["Zonnepark"]
+    df["laadpalen"] = df["Laadpalenauto"]+ df["Laadpalen_Trucks"]
+    df["Verbruik"] = (df["Batterij_Verbruik"] - df["Net_Verbruik"])
+    df["Levering"] = (df["Batterij_Teruglevering"] - df["Net_Teruglevering"])
 
-### HBE's voor hernieuwbaar deel
-Alleen voor het hernieuwbare deel van de elektriciteit schrijft het register een aantal HBE’s bij. Voor leveringen van elektriciteit uit het net wordt het Nederlandse aandeel hernieuwbare elektriciteit (van twee jaar voor het leverjaar) gebruikt. Voor 2024 is dit percentage 39,9%.
+    # Apply the function to the DataFrame
+    df['Verbruik_Gebouw'] = df.apply(verbruik_gebouw, axis=1)
 
-In twee scenario’s kan de volledige (100%) levering van elektriciteit aan vervoer met HBE’s beloond worden:
 
-1. elektriciteit die op de leveringslocatie (op hetzelfde kadastrale adres) uit hernieuwbare bronnen opgewekt wordt en rechtstreeks aan vervoer is geleverd met behulp van een bemeterd leverpunt;
-2. elektriciteit uit hernieuwbare bronnen, opgewekt op een andere locatie (adres), die met een directe lijn aan de leverlocatie is geleverd en met een bemeterd leverpunt aan vervoer geleverd is. 
-De inboeker moet over een niet-net Garantie van Oorsprong (GvO) ter grootte van de inboeking beschikken, die naar de NEa overgemaakt dient te worden. Ook mag er voor de elektriciteit geen exploitatiesubsidie betaald zijn.
 
-De inboeker moet altijd kunnen aantonen dat de hernieuwbare elektriciteit (al dan niet na tussenopslag in een accu) aan voertuigen is geleverd. Elektriciteit die terug geleverd is aan het net of aan andere installaties op de aansluiting is geleverd, kan niet ingeboekt worden.
+    # Maak de figuur
+    fig = go.Figure()
 
-Voor de berekening van het aantal HBE’s wordt een weegfactor 4 gebruikt, vanwege de energie-efficiëntie van elektrisch rijden. De berekening van het aantal HBE’s gebeurt automatisch in het REV. De formules zijn als volgt:
+    # Voeg elke lijn toe aan de figuur
+    for column in df.columns[6:13]:
+        fig.add_trace(go.Scatter(x=df.index, y=df[column], mode='lines', name=column))
 
-- $Aantal\ HBE-O\ voor\ leveringen\ uit\ het\ net (2024) = omvang\ levering\ in\ kWh\ * 0,0036 * 4 * 0,399$
-- $Aantal\ HBE-O\ voor\ 100\% hernieuwbare\ elektriciteit = omvang\ levering\ in\ kWh\ * 0,0036 * 4$ """)
+    # Figuur titel en labels
+    fig.update_layout(title='Lijn plot van meerdere variabelen over de tijd',
+                    xaxis_title='Tijd',
+                    yaxis_title='kWh')
 
-kWh_to_GJ = 0.0036  # 1 kWh = 0.0036 GigaJoule
-percentage_groene_net_stroom = 0.399 
-prijs_HBE = 12
+    st.write(fig)
 
-# Initialisatie van globale variabelen
-groene_stroom_batterij = 0
-grijze_stroom_batterij = 0
+    st.write(""" ## HBE berekenen
 
-def bereken_HBE(row):
-    global groene_stroom_batterij
-    global grijze_stroom_batterij
+    ### HBE's voor hernieuwbaar deel
+    Alleen voor het hernieuwbare deel van de elektriciteit schrijft het register een aantal HBE’s bij. Voor leveringen van elektriciteit uit het net wordt het Nederlandse aandeel hernieuwbare elektriciteit (van twee jaar voor het leverjaar) gebruikt. Voor 2024 is dit percentage 39,9%.
 
-    groene_stroom = row['Groene_Stroom']
-    laadpalen = row['laadpalen']
-    batterij_in = row['Batterij_Verbruik']
-    batterij_uit = row['Batterij_Teruglevering']
+    In twee scenario’s kan de volledige (100%) levering van elektriciteit aan vervoer met HBE’s beloond worden:
 
-    # Directe zonne-energie naar laadpalen
-    stroom_aan_laadpalen = min(groene_stroom, laadpalen)
+    1. elektriciteit die op de leveringslocatie (op hetzelfde kadastrale adres) uit hernieuwbare bronnen opgewekt wordt en rechtstreeks aan vervoer is geleverd met behulp van een bemeterd leverpunt;
+    2. elektriciteit uit hernieuwbare bronnen, opgewekt op een andere locatie (adres), die met een directe lijn aan de leverlocatie is geleverd en met een bemeterd leverpunt aan vervoer geleverd is. 
+    De inboeker moet over een niet-net Garantie van Oorsprong (GvO) ter grootte van de inboeking beschikken, die naar de NEa overgemaakt dient te worden. Ook mag er voor de elektriciteit geen exploitatiesubsidie betaald zijn.
 
-    # Resterende groene stroom na het voeden van laadpalen
-    resterende_groene_stroom = max(groene_stroom, laadpalen) - min(groene_stroom, laadpalen)
+    De inboeker moet altijd kunnen aantonen dat de hernieuwbare elektriciteit (al dan niet na tussenopslag in een accu) aan voertuigen is geleverd. Elektriciteit die terug geleverd is aan het net of aan andere installaties op de aansluiting is geleverd, kan niet ingeboekt worden.
 
-    # Laad groene stroom in de batterij
-    groene_stroom_batterij += min(batterij_in, resterende_groene_stroom)
-    grijze_stroom_batterij += max(0, batterij_in - resterende_groene_stroom)
-    
-    # Bereken hoeveel stroom er nog nodig is voor de laadpalen
-    resterende_laadpalen = laadpalen - stroom_aan_laadpalen
-    
-    # Gebruik stroom uit de batterij voor de laadpalen
-    stroom_uit_batterij = min(resterende_laadpalen, groene_stroom_batterij)
-    groene_stroom_batterij -= stroom_uit_batterij
-    resterende_laadpalen -= stroom_uit_batterij
-    
-    if grijze_stroom_batterij > 0 and batterij_uit < grijze_stroom_batterij:
-        grijze_stroom_batterij -= batterij_uit
-    else:
-        groene_stroom_batterij -= batterij_uit
+    Voor de berekening van het aantal HBE’s wordt een weegfactor 4 gebruikt, vanwege de energie-efficiëntie van elektrisch rijden. De berekening van het aantal HBE’s gebeurt automatisch in het REV. De formules zijn als volgt:
 
-    # Totale HBE groen is de som van groene stroom direct naar laadpalen
-    # en groene stroom uit de batterij
-    HBE_groen = stroom_aan_laadpalen + stroom_uit_batterij
+    - $Aantal\ HBE-O\ voor\ leveringen\ uit\ het\ net (2024) = omvang\ levering\ in\ kWh\ * 0,0036 * 4 * 0,399$
+    - $Aantal\ HBE-O\ voor\ 100\% hernieuwbare\ elektriciteit = omvang\ levering\ in\ kWh\ * 0,0036 * 4$ """)
 
-    return HBE_groen
+    kWh_to_GJ = 0.0036  # 1 kWh = 0.0036 GigaJoule
+    percentage_groene_net_stroom = 0.399 
+    prijs_HBE = 12
 
-# Bereken HBE's voor elke rij in de DataFrame
-df['HBE'] = df.apply(bereken_HBE, axis=1)
+    # Initialisatie van globale variabelen
+    groene_stroom_batterij = 0
+    grijze_stroom_batterij = 0
 
-somkWh = df['HBE'].sum()
-somkWk_grijs = (df['laadpalen'].sum() - somkWh)
-HBE_Groen = df['HBE'].sum()* kWh_to_GJ * 4 
-HBE_Grijs = somkWk_grijs * kWh_to_GJ * 4 *0.399
-Totaal = (HBE_Groen + HBE_Grijs) * prijs_HBE
+    def bereken_HBE(row):
+        global groene_stroom_batterij
+        global grijze_stroom_batterij
 
-st.write(f"Totale kWh Groen: {somkWh:0,.0f}")
-st.write(f"Totale kWh Grijs: {somkWk_grijs:0,.0f}")
-st.write(f"Totale HBE Groen: {HBE_Groen:0,.0f}")
-st.write(f"Totale HBE Grijs: {HBE_Grijs:0,.0f}")
-st.write(f"Prijs per HBE : {prijs_HBE}")
-st.write(f"Totale winst : €{Totaal:0,.2f}")
+        groene_stroom = row['Groene_Stroom']
+        laadpalen = row['laadpalen']
+        batterij_in = row['Batterij_Verbruik']
+        batterij_uit = row['Batterij_Teruglevering']
+
+        # Directe zonne-energie naar laadpalen
+        stroom_aan_laadpalen = min(groene_stroom, laadpalen)
+
+        # Resterende groene stroom na het voeden van laadpalen
+        resterende_groene_stroom = max(groene_stroom, laadpalen) - min(groene_stroom, laadpalen)
+
+        # Laad groene stroom in de batterij
+        groene_stroom_batterij += min(batterij_in, resterende_groene_stroom)
+        grijze_stroom_batterij += max(0, batterij_in - resterende_groene_stroom)
+        
+        # Bereken hoeveel stroom er nog nodig is voor de laadpalen
+        resterende_laadpalen = laadpalen - stroom_aan_laadpalen
+        
+        # Gebruik stroom uit de batterij voor de laadpalen
+        stroom_uit_batterij = min(resterende_laadpalen, groene_stroom_batterij)
+        groene_stroom_batterij -= stroom_uit_batterij
+        resterende_laadpalen -= stroom_uit_batterij
+        
+        if grijze_stroom_batterij > 0 and batterij_uit < grijze_stroom_batterij:
+            grijze_stroom_batterij -= batterij_uit
+        else:
+            groene_stroom_batterij -= batterij_uit
+
+        # Totale HBE groen is de som van groene stroom direct naar laadpalen
+        # en groene stroom uit de batterij
+        HBE_groen = stroom_aan_laadpalen + stroom_uit_batterij
+
+        return HBE_groen
+
+    # Bereken HBE's voor elke rij in de DataFrame
+    df['HBE'] = df.apply(bereken_HBE, axis=1)
+
+    somkWh = df['HBE'].sum()
+    somkWk_grijs = (df['laadpalen'].sum() - somkWh)
+    HBE_Groen = df['HBE'].sum()* kWh_to_GJ * 4 
+    HBE_Grijs = somkWk_grijs * kWh_to_GJ * 4 *0.399
+    Totaal = (HBE_Groen + HBE_Grijs) * prijs_HBE
+
+    results = {
+        "Omschrijving": [
+            "Totale kWh Groen",
+            "Totale kWh Grijs",
+            "Totale HBE Groen",
+            "Totale HBE Grijs",
+            "Prijs per HBE",
+            "Totale winst (€)"
+        ],
+        "Waarde": [
+            f"{somkWh:0,.0f}",
+            f"{somkWk_grijs:0,.0f}",
+            f"{HBE_Groen:0,.0f}",
+            f"{HBE_Grijs:0,.0f}",
+            f"{prijs_HBE:0,.2f}",
+            f"€{Totaal:0,.2f}"
+        ]
+    }
+
+        # DataFrame voor de resultaten
+    results_df = pd.DataFrame(results)
+
+    # Resultaten tonen in een verticale tabel zonder index
+    st.write("### Resultaten")
+
+    # Of gebruik st.dataframe() met opties om de index te verbergen
+    st.dataframe(results_df, use_container_width=True, hide_index= True)
+
+
+else:
+    # If no file is uploaded, show a message
+    st.write("")
+
+
