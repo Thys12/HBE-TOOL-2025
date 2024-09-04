@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import plotly.graph_objects as go
 import plotly.express as px
+import numpy as np
 
 st.title("Hernieuwbare Brandstof Eenheden")
 st.markdown("""
@@ -205,41 +206,110 @@ if uploaded_file is not None:
     # Bereken HBE's voor elke rij in de DataFrame
     df['HBE'] = df.apply(bereken_HBE, axis=1)
 
-    somkWh = df['HBE'].sum()
-    somkWk_grijs = (df['laadpalen'].sum() - somkWh)
-    HBE_Groen = df['HBE'].sum()* kWh_to_GJ * 4 
-    HBE_Grijs = somkWk_grijs * kWh_to_GJ * 4 *0.399
-    Totaal = (HBE_Groen + HBE_Grijs) * prijs_HBE
+    
 
-    results = {
-        "Omschrijving": [
-            "Totale kWh Groen",
-            "Totale kWh Grijs",
-            "Totale HBE Groen",
-            "Totale HBE Grijs",
-            "Prijs per HBE",
-            "Totale winst (€)"
-        ],
-        "Waarde": [
-            f"{somkWh:0,.0f}",
-            f"{somkWk_grijs:0,.0f}",
-            f"{HBE_Groen:0,.0f}",
-            f"{HBE_Grijs:0,.0f}",
-            f"{prijs_HBE:0,.2f}",
-            f"€{Totaal:0,.2f}"
-        ]
-    }
-
-        # DataFrame voor de resultaten
-    results_df = pd.DataFrame(results)
 
     # Resultaten tonen in een verticale tabel zonder index
     st.write("### Resultaten")
-
-    # Of gebruik st.dataframe() met opties om de index te verbergen
-    st.dataframe(results_df, use_container_width=True, hide_index= True)
+    
 
 
+    option = st.selectbox(
+        'Hoe wil je de data zien?',
+        ('Totaal', 'Per Jaar', 'Per Kwartaal', 'Per Maand')
+    )
+
+    # Functie om data te berekenen
+    def calculate_data(option):
+        if option == 'Totaal':
+            result = df['HBE'].sum() * kWh_to_GJ * 4 # Totaal
+            result = np.floor(result)  # Afronden naar beneden
+            st.write(f"Totaal: {result}")
+
+        elif option == 'Per Jaar':
+            result = df.resample('Y')['HBE'].sum() * kWh_to_GJ * 4 # Groeperen per jaar en som berekenen
+            result = result.apply(np.floor)  # Afronden naar beneden
+            st.write("Totaal per jaar:")
+            st.table(result)
+
+        elif option == 'Per Kwartaal':
+            result = df.resample('Q')['HBE'].sum() * kWh_to_GJ * 4  # Groeperen per kwartaal en som berekenen
+            result = result.apply(np.floor)  # Afronden naar beneden
+            st.write("Totaal per kwartaal:")
+            st.table(result)
+
+        elif option == 'Per Maand':
+            result = df.resample('M')['HBE'].sum() * kWh_to_GJ * 4 # Groeperen per maand en som berekenen
+            result = result.apply(np.floor)  # Afronden naar beneden
+            st.write("Totaal per maand:")
+            st.table(result)
+
+    # Berekening uitvoeren op basis van de keuze
+    calculate_data(option)
+    # Hulpwaarden
+    kWh_to_GJ = 0.0036  # Conversiefactor van kWh naar GJ (voorbeeldwaarde)
+    prijs_HBE = 20.0  # Voorbeeldprijs per HBE
+
+
+
+    # Functie om data te berekenen en te tonen
+    def calculate_data(option):
+        if option == 'Totaal':
+            # Berekeningen
+            somkWh = df['HBE'].sum()
+            somkWk_grijs = (df['laadpalen'].sum() - somkWh)
+            HBE_Groen = somkWh * kWh_to_GJ * 4
+            HBE_Grijs = somkWk_grijs * kWh_to_GJ * 4 * 0.399
+            Totaal = (HBE_Groen + HBE_Grijs) * prijs_HBE
+
+            # Resultaten samenvatten in een dataframe
+            results = {
+                "Omschrijving": [
+                    "Totale kWh Groen",
+                    "Totale kWh Grijs",
+                    "Totale HBE Groen",
+                    "Totale HBE Grijs",
+                    "Prijs per HBE",
+                    "Totale winst (€)"
+                ],
+                "Waarde": [
+                    f"{somkWh:0,.0f}",
+                    f"{somkWk_grijs:0,.0f}",
+                    f"{HBE_Groen:0,.0f}",
+                    f"{HBE_Grijs:0,.0f}",
+                    f"{prijs_HBE:0,.2f}",
+                    f"€{Totaal:0,.2f}"
+                ]
+            }
+            # Resultaten tonen
+            results_df = pd.DataFrame(results)
+            st.write("Resultaten voor Totaal:")
+            st.table(results_df)
+
+        else:
+            # Groeperen en berekenen per gekozen tijdsperiode
+            if option == 'Per Jaar':
+                df_grouped = df.resample('Y').sum()
+            elif option == 'Per Kwartaal':
+                df_grouped = df.resample('Q').sum()
+            elif option == 'Per Maand':
+                df_grouped = df.resample('M').sum()
+
+            # Berekeningen per periode
+            df_grouped['Totale kWh Groen'] = df_grouped['HBE']
+            df_grouped['Totale kWh Grijs'] = df_grouped['laadpalen'] - df_grouped['HBE']
+            df_grouped['Totale HBE Groen'] = df_grouped['Totale kWh Groen'] * kWh_to_GJ * 4
+            df_grouped['Totale HBE Grijs'] = df_grouped['Totale kWh Grijs'] * kWh_to_GJ * 4 * 0.399
+            df_grouped['Totale winst (€)'] = (df_grouped['Totale HBE Groen'] + df_grouped['Totale HBE Grijs']) * prijs_HBE
+
+            # Afronden naar beneden
+            df_grouped = df_grouped[['Totale kWh Groen', 'Totale kWh Grijs', 'Totale HBE Groen', 'Totale HBE Grijs', 'Totale winst (€)']].apply(np.floor)
+
+            st.write(f"Resultaten per {option.lower()}:")
+            st.table(df_grouped)
+
+    # Berekening uitvoeren op basis van de keuze
+    calculate_data(option)
 else:
     # If no file is uploaded, show a message
     st.write("")
