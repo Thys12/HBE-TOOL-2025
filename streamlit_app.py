@@ -47,9 +47,9 @@ st.markdown("""
 
 # Conclusie
 st.markdown("""
-### Conclusie
+### Data ophalen
 
-HBE-O Elektriciteit is een belangrijk instrument binnen het HBE-systeem dat specifiek gericht is op de promotie van hernieuwbare elektriciteit voor de transportsector. Het stimuleert zowel de productie van hernieuwbare elektriciteit als de uitrol van elektrische voertuigen en laadinfrastructuur. Door het creëren van een markt voor hernieuwbare energie in transport kunnen producenten, leveranciers, en beleidsmakers gezamenlijk werken aan een duurzamere toekomst.
+De data wordt opgehaald uit fudura.
 """)
 
 
@@ -219,38 +219,6 @@ if uploaded_file is not None:
         ('Totaal', 'Per Jaar', 'Per Kwartaal', 'Per Maand')
     )
 
-    # Functie om data te berekenen
-    def calculate_data(option):
-        if option == 'Totaal':
-            result = df['HBE'].sum() * kWh_to_GJ * 4 # Totaal
-            result = np.floor(result)  # Afronden naar beneden
-            st.write(f"Totaal: {result}")
-
-        elif option == 'Per Jaar':
-            result = df.resample('Y')['HBE'].sum() * kWh_to_GJ * 4 # Groeperen per jaar en som berekenen
-            result = result.apply(np.floor)  # Afronden naar beneden
-            st.write("Totaal per jaar:")
-            st.table(result)
-
-        elif option == 'Per Kwartaal':
-            result = df.resample('Q')['HBE'].sum() * kWh_to_GJ * 4  # Groeperen per kwartaal en som berekenen
-            result = result.apply(np.floor)  # Afronden naar beneden
-            st.write("Totaal per kwartaal:")
-            st.table(result)
-
-        elif option == 'Per Maand':
-            result = df.resample('M')['HBE'].sum() * kWh_to_GJ * 4 # Groeperen per maand en som berekenen
-            result = result.apply(np.floor)  # Afronden naar beneden
-            st.write("Totaal per maand:")
-            st.table(result)
-
-    # Berekening uitvoeren op basis van de keuze
-    calculate_data(option)
-    # Hulpwaarden
-    kWh_to_GJ = 0.0036  # Conversiefactor van kWh naar GJ (voorbeeldwaarde)
-    prijs_HBE = 20.0  # Voorbeeldprijs per HBE
-
-
 
     # Functie om data te berekenen en te tonen
     def calculate_data(option):
@@ -303,10 +271,12 @@ if uploaded_file is not None:
             df_grouped['Totale winst (€)'] = (df_grouped['Totale HBE Groen'] + df_grouped['Totale HBE Grijs']) * prijs_HBE
 
             # Afronden naar beneden
-            df_grouped = df_grouped[['Totale kWh Groen', 'Totale kWh Grijs', 'Totale HBE Groen', 'Totale HBE Grijs', 'Totale winst (€)']].apply(np.floor)
+            df_grouped = round(df_grouped[['Totale kWh Groen', 'Totale kWh Grijs', 'Totale HBE Groen', 'Totale HBE Grijs', 'Totale winst (€)']].apply(np.floor),1)
 
             st.write(f"Resultaten per {option.lower()}:")
-            st.table(df_grouped)
+            st.write(df_grouped)
+
+
 
     # Berekening uitvoeren op basis van de keuze
     calculate_data(option)
