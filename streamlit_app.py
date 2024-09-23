@@ -225,26 +225,26 @@ if uploaded_file is not None:
         if option == 'Totaal':
             # Berekeningen
             somkWh = df['HBE'].sum()
-            somkWk_grijs = (df['laadpalen'].sum() - somkWh)
+            somkWk_Net = (df['laadpalen'].sum() - somkWh)
             HBE_Groen = somkWh * kWh_to_GJ * 4
-            HBE_Grijs = somkWk_grijs * kWh_to_GJ * 4 * 0.399
-            Totaal = (HBE_Groen + HBE_Grijs) * prijs_HBE
+            HBE_Net = somkWk_Net * kWh_to_GJ * 4 * 0.399
+            Totaal = (HBE_Groen + HBE_Net) * prijs_HBE
 
             # Resultaten samenvatten in een dataframe
             results = {
                 "Omschrijving": [
                     "Totale kWh Groen",
-                    "Totale kWh Grijs",
+                    "Totale kWh Netlevering",
                     "Totale HBE Groen",
-                    "Totale HBE Grijs",
+                    "Totale HBE Netlevering",
                     "Prijs per HBE",
                     "Totale winst (€)"
                 ],
                 "Waarde": [
                     f"{somkWh:0,.0f}",
-                    f"{somkWk_grijs:0,.0f}",
+                    f"{somkWk_Net:0,.0f}",
                     f"{HBE_Groen:0,.0f}",
-                    f"{HBE_Grijs:0,.0f}",
+                    f"{HBE_Net:0,.0f}",
                     f"{prijs_HBE:0,.2f}",
                     f"€{Totaal:0,.2f}"
                 ]
@@ -265,9 +265,9 @@ if uploaded_file is not None:
 
             # Berekeningen per periode
             df_grouped['Totale kWh Groen'] = df_grouped['HBE']
-            df_grouped['Totale kWh Grijs'] = df_grouped['laadpalen'] - df_grouped['HBE']
+            df_grouped['Totale kWh Net'] = df_grouped['laadpalen'] - df_grouped['HBE']
             df_grouped['Totale HBE Groen'] = df_grouped['Totale kWh Groen'] * kWh_to_GJ * 4
-            df_grouped['Totale HBE Grijs'] = df_grouped['Totale kWh Grijs'] * kWh_to_GJ * 4 * 0.399
+            df_grouped['Totale HBE Net'] = df_grouped['Totale kWh Net'] * kWh_to_GJ * 4 * 0.399
             df_grouped['Totale winst (€)'] = (df_grouped['Totale HBE Groen'] + df_grouped['Totale HBE Grijs']) * prijs_HBE
 
             # Afronden naar beneden
