@@ -268,10 +268,10 @@ if uploaded_file is not None:
             df_grouped['Totale kWh Net'] = df_grouped['laadpalen'] - df_grouped['HBE']
             df_grouped['Totale HBE Groen'] = df_grouped['Totale kWh Groen'] * kWh_to_GJ * 4
             df_grouped['Totale HBE Net'] = df_grouped['Totale kWh Net'] * kWh_to_GJ * 4 * 0.399
-            df_grouped['Totale winst (€)'] = (df_grouped['Totale HBE Groen'] + df_grouped['Totale HBE Grijs']) * prijs_HBE
+            df_grouped['Totale winst (€)'] = (df_grouped['Totale HBE Groen'] + df_grouped['Totale HBE Net']) * prijs_HBE
 
             # Afronden naar beneden
-            df_grouped = round(df_grouped[['Totale kWh Groen', 'Totale kWh Grijs', 'Totale HBE Groen', 'Totale HBE Grijs', 'Totale winst (€)']].apply(np.floor),1)
+            df_grouped = round(df_grouped[['Totale kWh Groen', 'Totale kWh Net', 'Totale HBE Groen', 'Totale HBE Net', 'Totale winst (€)']].apply(np.floor),1)
 
             st.write(f"Resultaten per {option.lower()}:")
             st.write(df_grouped)
