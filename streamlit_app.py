@@ -159,7 +159,7 @@ if uploaded_file is not None:
 
     kWh_to_GJ = 0.0036  # 1 kWh = 0.0036 GigaJoule
     percentage_groene_net_stroom = 0.399 
-    prijs_HBE = 12
+    prijs_HBE = 23
 
     # Initialisatie van globale variabelen
     groene_stroom_batterij = 0
@@ -168,42 +168,49 @@ if uploaded_file is not None:
     def bereken_HBE(row):
         global groene_stroom_batterij
         global grijze_stroom_batterij
-
+        
+        # Inputwaarden van de rij
         groene_stroom = row['Groene_Stroom']
         laadpalen = row['laadpalen']
         batterij_in = row['Batterij_Verbruik']
         batterij_uit = row['Batterij_Teruglevering']
-
-        # Directe zonne-energie naar laadpalen
+        
+        # **Stap 1**: Directe zonne-energie naar laadpalen
         stroom_aan_laadpalen = min(groene_stroom, laadpalen)
+        resterende_groene_stroom = groene_stroom - stroom_aan_laadpalen  # Overgebleven groene stroom
 
-        # Resterende groene stroom na het voeden van laadpalen
-        resterende_groene_stroom = max(groene_stroom, laadpalen) - min(groene_stroom, laadpalen)
+        # **Stap 2**: Resterende groene stroom naar de batterij
+        groene_stroom_naar_batterij = min(batterij_in, resterende_groene_stroom)
+        groene_stroom_batterij += groene_stroom_naar_batterij
 
-        # Laad groene stroom in de batterij
-        groene_stroom_batterij += min(batterij_in, resterende_groene_stroom)
-        grijze_stroom_batterij += max(0, batterij_in - resterende_groene_stroom)
-        
-        # Bereken hoeveel stroom er nog nodig is voor de laadpalen
+        # **Stap 3**: Aanvullen batterij met grijze stroom als er meer nodig is
+        resterende_batterij_in = batterij_in - groene_stroom_naar_batterij
+        grijze_stroom_naar_batterij = max(0, resterende_batterij_in)
+        grijze_stroom_batterij += grijze_stroom_naar_batterij
+
+        # **Stap 4**: Gebruik batterij (groen eerst, daarna grijs) voor teruglevering
+        groene_stroom_uit_batterij = min(batterij_uit, groene_stroom_batterij)
+        groene_stroom_batterij -= groene_stroom_uit_batterij
+
+        resterende_batterij_uit = batterij_uit - groene_stroom_uit_batterij
+        grijze_stroom_uit_batterij = min(resterende_batterij_uit, grijze_stroom_batterij)
+        grijze_stroom_batterij -= grijze_stroom_uit_batterij
+
+        # **Stap 5**: Gebruik batterij (groen eerst, dan grijs) voor laadpalen
         resterende_laadpalen = laadpalen - stroom_aan_laadpalen
-        
-        # Gebruik stroom uit de batterij voor de laadpalen
-        stroom_uit_batterij = min(resterende_laadpalen, groene_stroom_batterij)
-        groene_stroom_batterij -= stroom_uit_batterij
-        resterende_laadpalen -= stroom_uit_batterij
-        
-        if grijze_stroom_batterij > 0 and batterij_uit < grijze_stroom_batterij:
-            grijze_stroom_batterij -= batterij_uit
-        else:
-            groene_stroom_batterij -= batterij_uit
+        groene_stroom_uit_batterij_voor_laadpalen = min(resterende_laadpalen, groene_stroom_batterij)
+        groene_stroom_batterij -= groene_stroom_uit_batterij_voor_laadpalen
 
-        # Totale HBE groen is de som van groene stroom direct naar laadpalen
-        # en groene stroom uit de batterij
-        HBE_groen = stroom_aan_laadpalen + stroom_uit_batterij
+        resterende_laadpalen -= groene_stroom_uit_batterij_voor_laadpalen
+        grijze_stroom_uit_batterij_voor_laadpalen = min(resterende_laadpalen, grijze_stroom_batterij)
+        grijze_stroom_batterij -= grijze_stroom_uit_batterij_voor_laadpalen
+
+        # **Stap 6**: Bereken HBE (Groene energie gebruikt voor laadpalen)
+        HBE_groen = stroom_aan_laadpalen + groene_stroom_uit_batterij_voor_laadpalen
 
         return HBE_groen
 
-    # Bereken HBE's voor elke rij in de DataFrame
+    # Toepassen op de DataFrame
     df['HBE'] = df.apply(bereken_HBE, axis=1)
 
     
