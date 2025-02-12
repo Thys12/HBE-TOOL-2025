@@ -76,8 +76,8 @@ if uploaded_file is not None:
     kolom_Laadpalenauto = pivot_df[('Laadpalen Cars','Elektra verbruik (kWh)')]
     kolom_Net_Teruglevering = pivot_df[('Primair Allocatiepunt (PAP)', 'Elektra Teruglevering (kWh)')]
     kolom_Net_Verbruik = pivot_df[('Primair Allocatiepunt (PAP)','Elektra verbruik (kWh)')]
-    kolom_Batterij_Teruglevering = pivot_df[( 'Secundair Allocatiepunt (SAP)', 'Elektra Teruglevering (kWh)')]
-    kolom_Batterij_Verbruik = pivot_df[( 'Secundair Allocatiepunt (SAP)','Elektra verbruik (kWh)')]
+    kolom_Batterij_Teruglevering = pivot_df[('Secundair Allocatiepunt (SAP)', 'Elektra Teruglevering (kWh)')]
+    kolom_Batterij_Verbruik = pivot_df[('Secundair Allocatiepunt (SAP)','Elektra verbruik (kWh)')]
     kolom_LaadpalenTrucks = pivot_df[('laadpalen trucks','Elektra verbruik (kWh)')]
 
 
@@ -96,7 +96,6 @@ if uploaded_file is not None:
             VerbruikGebouw = GroeneStroom + abs(Verbruik) - abs(Teruglevering) - Laadpalen
         else:  # Verbruik > 0 and Teruglevering > 0
             VerbruikGebouw = GroeneStroom + abs(Verbruik) + abs(Teruglevering) - Laadpalen
-
         return VerbruikGebouw
 
     # Combineer deze kolommen in een nieuwe DataFrame
@@ -109,21 +108,20 @@ if uploaded_file is not None:
         'Net_Teruglevering': kolom_Net_Teruglevering.values,
         'Net_Verbruik': kolom_Net_Verbruik.values,
         'Batterij_Teruglevering': kolom_Batterij_Teruglevering.values,
-        'Batterij_Verbruik': kolom_Batterij_Verbruik.values
-        
+        'Batterij_Verbruik': kolom_Batterij_Verbruik.values     
     })
 
     df.set_index(['Tijdstip'],inplace=True)
 
-    df["Groene_Stroom"] = df["Windturbines"]+ df["Zonnepark"]
-    df["laadpalen"] = df["Laadpalenauto"]+ df["Laadpalen_Trucks"]
+    df["Groene_Stroom"] = df["Windturbines"] + df["Zonnepark"]
+    df["laadpalen"] = df["Laadpalenauto"] + df["Laadpalen_Trucks"]
     df["Verbruik"] = (df["Batterij_Verbruik"] - df["Net_Verbruik"])
     df["Levering"] = (df["Batterij_Teruglevering"] - df["Net_Teruglevering"])
 
     # Apply the function to the DataFrame
     df['Verbruik_Gebouw'] = df.apply(verbruik_gebouw, axis=1)
 
-
+    df = df.drop(df.index[-1])
 
     # Maak de figuur
     fig = go.Figure()
@@ -159,62 +157,72 @@ if uploaded_file is not None:
 
     kWh_to_GJ = 0.0036  # 1 kWh = 0.0036 GigaJoule
     percentage_groene_net_stroom = 0.399 
-    prijs_HBE = 23
+    prijs_HBE = st.number_input("Vul De prijs van de  HBE's in:")
+    st.write("De HBE prijs is: ", prijs_HBE)
 
     # Initialisatie van globale variabelen
     groene_stroom_batterij = 0
     grijze_stroom_batterij = 0
 
-    def bereken_HBE(row):
-        global groene_stroom_batterij
-        global grijze_stroom_batterij
+    def calculate_HBEs(row):
         
-        # Inputwaarden van de rij
         groene_stroom = row['Groene_Stroom']
         laadpalen = row['laadpalen']
-        batterij_in = row['Batterij_Verbruik']
-        batterij_uit = row['Batterij_Teruglevering']
         
-        # **Stap 1**: Directe zonne-energie naar laadpalen
-        stroom_aan_laadpalen = min(groene_stroom, laadpalen)
-        resterende_groene_stroom = groene_stroom - stroom_aan_laadpalen  # Overgebleven groene stroom
+        # Directe zonne-energie HBE's
+        HBE_direct = min(groene_stroom, laadpalen)
 
-        # **Stap 2**: Resterende groene stroom naar de batterij
-        groene_stroom_naar_batterij = min(batterij_in, resterende_groene_stroom)
-        groene_stroom_batterij += groene_stroom_naar_batterij
+        return HBE_direct
 
-        # **Stap 3**: Aanvullen batterij met grijze stroom als er meer nodig is
-        resterende_batterij_in = batterij_in - groene_stroom_naar_batterij
-        grijze_stroom_naar_batterij = max(0, resterende_batterij_in)
-        grijze_stroom_batterij += grijze_stroom_naar_batterij
+    df['HBE'] = df.apply(calculate_HBEs, axis=1)
 
-        # **Stap 4**: Gebruik batterij (groen eerst, daarna grijs) voor teruglevering
-        groene_stroom_uit_batterij = min(batterij_uit, groene_stroom_batterij)
-        groene_stroom_batterij -= groene_stroom_uit_batterij
+    # def bereken_HBE(row):
+    #     global groene_stroom_batterij
+    #     global grijze_stroom_batterij
+        
+    #     # Inputwaarden van de rij
+    #     groene_stroom = row['Groene_Stroom']
+    #     laadpalen = row['laadpalen']
+    #     batterij_in = row['Batterij_Verbruik']
+    #     batterij_uit = row['Batterij_Teruglevering']
+        
+    #     # **Stap 1**: Directe zonne-energie naar laadpalen
+    #     stroom_aan_laadpalen = min(groene_stroom, laadpalen)
+    #     resterende_groene_stroom = groene_stroom - stroom_aan_laadpalen  # Overgebleven groene stroom
 
-        resterende_batterij_uit = batterij_uit - groene_stroom_uit_batterij
-        grijze_stroom_uit_batterij = min(resterende_batterij_uit, grijze_stroom_batterij)
-        grijze_stroom_batterij -= grijze_stroom_uit_batterij
+    #     # **Stap 2**: Resterende groene stroom naar de batterij
+    #     groene_stroom_naar_batterij = min(batterij_in, resterende_groene_stroom)
+    #     groene_stroom_batterij += groene_stroom_naar_batterij
 
-        # **Stap 5**: Gebruik batterij (groen eerst, dan grijs) voor laadpalen
-        resterende_laadpalen = laadpalen - stroom_aan_laadpalen
-        groene_stroom_uit_batterij_voor_laadpalen = min(resterende_laadpalen, groene_stroom_batterij)
-        groene_stroom_batterij -= groene_stroom_uit_batterij_voor_laadpalen
+    #     # **Stap 3**: Aanvullen batterij met grijze stroom als er meer nodig is
+    #     resterende_batterij_in = batterij_in - groene_stroom_naar_batterij
+    #     grijze_stroom_naar_batterij = max(0, resterende_batterij_in)
+    #     grijze_stroom_batterij += grijze_stroom_naar_batterij
 
-        resterende_laadpalen -= groene_stroom_uit_batterij_voor_laadpalen
-        grijze_stroom_uit_batterij_voor_laadpalen = min(resterende_laadpalen, grijze_stroom_batterij)
-        grijze_stroom_batterij -= grijze_stroom_uit_batterij_voor_laadpalen
+    #     # **Stap 4**: Gebruik batterij (groen eerst, daarna grijs) voor teruglevering
+    #     groene_stroom_uit_batterij = min(batterij_uit, groene_stroom_batterij)
+    #     groene_stroom_batterij -= groene_stroom_uit_batterij
 
-        # **Stap 6**: Bereken HBE (Groene energie gebruikt voor laadpalen)
-        HBE_groen = stroom_aan_laadpalen + groene_stroom_uit_batterij_voor_laadpalen
+    #     resterende_batterij_uit = batterij_uit - groene_stroom_uit_batterij
+    #     grijze_stroom_uit_batterij = min(resterende_batterij_uit, grijze_stroom_batterij)
+    #     grijze_stroom_batterij -= grijze_stroom_uit_batterij
 
-        return HBE_groen
+    #     # **Stap 5**: Gebruik batterij (groen eerst, dan grijs) voor laadpalen
+    #     resterende_laadpalen = laadpalen - stroom_aan_laadpalen
+    #     groene_stroom_uit_batterij_voor_laadpalen = min(resterende_laadpalen, groene_stroom_batterij)
+    #     groene_stroom_batterij -= groene_stroom_uit_batterij_voor_laadpalen
 
-    # Toepassen op de DataFrame
-    df['HBE'] = df.apply(bereken_HBE, axis=1)
+    #     resterende_laadpalen -= groene_stroom_uit_batterij_voor_laadpalen
+    #     grijze_stroom_uit_batterij_voor_laadpalen = min(resterende_laadpalen, grijze_stroom_batterij)
+    #     grijze_stroom_batterij -= grijze_stroom_uit_batterij_voor_laadpalen
 
-    
+    #     # **Stap 6**: Bereken HBE (Groene energie gebruikt voor laadpalen)
+    #     HBE_groen = stroom_aan_laadpalen + groene_stroom_uit_batterij_voor_laadpalen
 
+    #     return HBE_groen
+
+    # # Toepassen op de DataFrame
+    # df['HBE'] = df.apply(bereken_HBE, axis=1)
 
     # Resultaten tonen in een verticale tabel zonder index
     st.write("### Resultaten")
