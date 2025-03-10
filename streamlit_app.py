@@ -156,7 +156,8 @@ if uploaded_file is not None:
     )
 
     print(df1.index)
-
+    lijst = [7.200,7.200,21.600,21.600,21.600,28.800,14.400]# maand 4/10
+    lijst_mwh = [0,0,0,2,2,6,6,6,8,4,13,5]
 
     # Functie om data te berekenen en te tonen
     def calculate_data(option):
@@ -171,6 +172,7 @@ if uploaded_file is not None:
             # Resultaten samenvatten in een dataframe
             results = {
                 "Omschrijving": [
+                    "Totale kWh aan GVO",
                     "Totale kWh Groen",
                     "Totale kWh Netlevering",
                     "Totale HBE Groen",
@@ -179,6 +181,7 @@ if uploaded_file is not None:
                     "Totale winst (€)"
                 ],
                 "Waarde": [
+                    f"{52000:0,.0f}",
                     f"{somkWh:0,.0f}",
                     f"{somkWk_Net:0,.0f}",
                     f"{HBE_Groen:0,.0f}",
@@ -218,6 +221,9 @@ if uploaded_file is not None:
 
     # Berekening uitvoeren op basis van de keuze
     calculate_data(option)
+
+
+    
 else:
     # If no file is uploaded, show a message
     st.write("")
