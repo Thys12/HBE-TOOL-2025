@@ -25,9 +25,8 @@ st.markdown("""
 4. **Stimulering van Elektrisch Rijden**: Het verkrijgen van HBE-O Elektriciteit moedigt investeringen aan in hernieuwbare energie-infrastructuur, zoals laadpalen en slimme netwerken, die nodig zijn om de groei van elektrisch rijden te ondersteunen.
 """)
 
-# Conclusie
+# Data Exporteren
 st.markdown("### Data exporteren uit fudura")
-
 uploaded_file = st.file_uploader("Upload je dataset (CSV of Excel)", type=["csv", "xlsx"])
 
 if uploaded_file is not None:
@@ -39,6 +38,12 @@ if uploaded_file is not None:
 
     st.write("### Voorbeeld van de dataset:")
     st.dataframe(df.head())
+
+    batterij_aanwezig = st.radio(
+    "Is er een batterij/ accu aanwezig?",
+    ["Ja", "Nee"],
+    index=None,
+    )
 
     # Stap 2: Kolommen selecteren
     st.write("### Toewijzing van kolommen")
@@ -127,9 +132,12 @@ if uploaded_file is not None:
     - $Aantal\ HBE-O\ voor\ 100\% hernieuwbare\ elektriciteit = omvang\ levering\ in\ kWh\ * 0,0036 * 4$ """)
 
     kWh_to_GJ = 0.0036  # 1 kWh = 0.0036 GigaJoule
-    percentage_groene_net_stroom = 0.399 
-    prijs_HBE = st.number_input("Vul De prijs van de  HBE's in:")
+    percentage_groene_net_stroom = st.number_input("Vul het percentage groene stroom in:")
+    st.write("Het percentage is: ", percentage_groene_net_stroom)
+    prijs_HBE = st.number_input("Vul de prijs van de  HBE's in:")
     st.write("De HBE prijs is: ", prijs_HBE)
+
+    percentage_groene_net_stroom = percentage_groene_net_stroom/100
 
     # Initialisatie van globale variabelen
     groene_stroom_batterij = 0
@@ -145,7 +153,56 @@ if uploaded_file is not None:
 
         return HBE_direct
 
-    df1['HBE'] = df1.apply(calculate_HBEs, axis=1)
+    def bereken_HBE(row):
+        global groene_stroom_batterij
+        global grijze_stroom_batterij
+
+        # Inputwaarden van de rij
+        groene_stroom = row['Groene_Stroom']
+        laadpalen = row['laadpalen']
+        batterij_in = row['Batterij_Verbruik']
+        batterij_uit = row['Batterij_Teruglevering']
+
+        # **Stap 1**: Directe zonne-energie naar laadpalen
+        stroom_aan_laadpalen = min(groene_stroom, laadpalen)
+        resterende_groene_stroom = groene_stroom - stroom_aan_laadpalen  # Overgebleven groene stroom
+
+        # **Stap 2**: Resterende groene stroom naar de batterij
+        groene_stroom_naar_batterij = min(batterij_in, resterende_groene_stroom)
+        groene_stroom_batterij += groene_stroom_naar_batterij
+
+        # **Stap 3**: Aanvullen batterij met grijze stroom als er meer nodig is
+        resterende_batterij_in = batterij_in - groene_stroom_naar_batterij
+        grijze_stroom_naar_batterij = max(0, resterende_batterij_in)
+        grijze_stroom_batterij += grijze_stroom_naar_batterij
+
+        # **Stap 4**: Gebruik batterij (groen eerst, daarna grijs) voor teruglevering
+        groene_stroom_uit_batterij = min(batterij_uit, groene_stroom_batterij)
+        groene_stroom_batterij -= groene_stroom_uit_batterij
+
+        resterende_batterij_uit = batterij_uit - groene_stroom_uit_batterij
+        grijze_stroom_uit_batterij = min(resterende_batterij_uit, grijze_stroom_batterij)
+        grijze_stroom_batterij -= grijze_stroom_uit_batterij
+
+        # **Stap 5**: Gebruik batterij (groen eerst, dan grijs) voor laadpalen
+        resterende_laadpalen = laadpalen - stroom_aan_laadpalen
+        groene_stroom_uit_batterij_voor_laadpalen = min(resterende_laadpalen, groene_stroom_batterij)
+        groene_stroom_batterij -= groene_stroom_uit_batterij_voor_laadpalen
+
+        resterende_laadpalen -= groene_stroom_uit_batterij_voor_laadpalen
+        grijze_stroom_uit_batterij_voor_laadpalen = min(resterende_laadpalen, grijze_stroom_batterij)
+        grijze_stroom_batterij -= grijze_stroom_uit_batterij_voor_laadpalen
+
+        # **Stap 6**: Bereken HBE (Groene energie gebruikt voor laadpalen)
+        HBE_groen = stroom_aan_laadpalen + groene_stroom_uit_batterij_voor_laadpalen
+
+        return HBE_groen
+
+    # # Toepassen op de DataFrame
+    if batterij_aanwezig == "Ja":
+        df1['HBE'] = df1.apply(bereken_HBE, axis=1)
+    else:
+        df1['HBE'] = df1.apply(calculate_HBEs, axis=1)
 
     # Resultaten tonen in een verticale tabel zonder index
     st.write("### Resultaten")
@@ -166,7 +223,7 @@ if uploaded_file is not None:
             somkWh = df1['HBE'].sum()
             somkWk_Net = (df1['Laadpalen'].sum() - somkWh)
             HBE_Groen = somkWh * kWh_to_GJ * 4
-            HBE_Net = somkWk_Net * kWh_to_GJ * 4 * 0.399
+            HBE_Net = somkWk_Net * kWh_to_GJ * 4 * 0.464   
             Totaal = (HBE_Groen + HBE_Net) * prijs_HBE
 
             # Resultaten samenvatten in een dataframe
