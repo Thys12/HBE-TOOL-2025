@@ -223,7 +223,7 @@ if uploaded_file is not None:
             somkWh = df1['HBE'].sum()
             somkWk_Net = (df1['Laadpalen'].sum() - somkWh)
             HBE_Groen = somkWh * kWh_to_GJ * 4
-            HBE_Net = somkWk_Net * kWh_to_GJ * 4 * 0.464   
+            HBE_Net = somkWk_Net * kWh_to_GJ * 4 * percentage_groene_net_stroom   
             Totaal = (HBE_Groen + HBE_Net) * prijs_HBE
 
             # Resultaten samenvatten in een dataframe
