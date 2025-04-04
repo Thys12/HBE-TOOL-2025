@@ -132,7 +132,7 @@ if uploaded_file is not None:
     - $Aantal\ HBE-O\ voor\ 100\% hernieuwbare\ elektriciteit = omvang\ levering\ in\ kWh\ * 0,0036 * 4$ """)
 
     kWh_to_GJ = 0.0036  # 1 kWh = 0.0036 GigaJoule
-    percentage_groene_net_stroom = st.number_input("Vul het percentage groene stroom in:")
+    percentage_groene_net_stroom = st.number_input("Vul het percentage groene stroom van het net in:")
     st.write("Het percentage is: ", percentage_groene_net_stroom)
     prijs_HBE = st.number_input("Vul de prijs van de  HBE's in:")
     st.write("De HBE prijs is: ", prijs_HBE)
@@ -159,7 +159,7 @@ if uploaded_file is not None:
 
         # Inputwaarden van de rij
         groene_stroom = row['Groene_Stroom']
-        laadpalen = row['laadpalen']
+        laadpalen = row['Laadpalen']
         batterij_in = row['Batterij_Verbruik']
         batterij_uit = row['Batterij_Teruglevering']
 
@@ -265,7 +265,7 @@ if uploaded_file is not None:
             df_grouped['Totale kWh Groen'] = df_grouped['HBE']
             df_grouped['Totale kWh Net'] = df_grouped['Laadpalen'] - df_grouped['HBE']
             df_grouped['Totale HBE Groen'] = df_grouped['Totale kWh Groen'] * kWh_to_GJ * 4
-            df_grouped['Totale HBE Net'] = df_grouped['Totale kWh Net'] * kWh_to_GJ * 4 * 0.399
+            df_grouped['Totale HBE Net'] = df_grouped['Totale kWh Net'] * kWh_to_GJ * 4 * percentage_groene_net_stroom
             df_grouped['Totale winst (€)'] = (df_grouped['Totale HBE Groen'] + df_grouped['Totale HBE Net']) * prijs_HBE
 
             # Afronden naar beneden
