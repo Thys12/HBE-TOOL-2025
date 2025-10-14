@@ -116,7 +116,8 @@ if uploaded_file is not None:
     st.write(""" ## HBE berekenen
 
     ### HBE's voor hernieuwbaar deel
-    Alleen voor het hernieuwbare deel van de elektriciteit schrijft het register een aantal HBE’s bij. Voor leveringen van elektriciteit uit het net wordt het Nederlandse aandeel hernieuwbare elektriciteit (van twee jaar voor het leverjaar) gebruikt. Voor 2024 is dit percentage 39,9%.
+    Alleen voor het hernieuwbare deel van de elektriciteit schrijft het register een aantal HBE’s bij. Voor leveringen van elektriciteit uit het net wordt het Nederlandse aandeel hernieuwbare elektriciteit (van twee jaar voor het leverjaar) gebruikt.
+    Link naar de pagina waar het groene net deel van het huidige jaar in % wordt gepubliceerd: https://www.emissieautoriteit.nl/regelgeving/hernieuwbare-energie-voor-vervoer/inboeken-leveringen-hernieuwbare-energie/inboeken-elektriciteit
 
     In twee scenario’s kan de volledige (100%) levering van elektriciteit aan vervoer met HBE’s beloond worden:
 
