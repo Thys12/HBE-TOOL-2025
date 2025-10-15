@@ -128,7 +128,7 @@ if uploaded_file is not None:
 
     Voor de berekening van het aantal HBE’s wordt een weegfactor 4 gebruikt, vanwege de energie-efficiëntie van elektrisch rijden. De berekening van het aantal HBE’s gebeurt automatisch in het REV. De formules zijn als volgt:
 
-    - $Aantal\ HBE-O\ voor\ leveringen\ uit\ het\ net = omvang\ levering\ in\ kWh\ * 0,0036 * 4 * groene net percentage$
+    - $Aantal\ HBE-O\ voor\ leveringen\ uit\ het\ net = omvang\ levering\ in\ kWh\ * 0,0036 * 4 * net\ deel\ groen\ percentage$
     - $Aantal\ HBE-O\ voor\ 100\% hernieuwbare\ elektriciteit = omvang\ levering\ in\ kWh\ * 0,0036 * 4$ """)
 
     kWh_to_GJ = 0.0036  # 1 kWh = 0.0036 GigaJoule
