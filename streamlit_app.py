@@ -264,8 +264,8 @@ if uploaded_file is not None:
                 df_grouped = df1.resample('M').sum()
 
             # Berekeningen per periode
-            df_grouped['Totale kWh Groen'] = df_grouped['HBE'] * Verliezen_door_assets
-            df_grouped['Totale kWh Net'] = ( df_grouped['Laadpalen'] - df_grouped['HBE'] ) * Verliezen_door_assets
+            df_grouped['Totale kWh Groen'] = df_grouped['HBE']
+            df_grouped['Totale kWh Net'] = ( df_grouped['Laadpalen'] - df_grouped['HBE'] )
             df_grouped['Totale HBE Groen'] = df_grouped['Totale kWh Groen'] * kWh_to_GJ * 4
             df_grouped['Totale HBE Net'] = df_grouped['Totale kWh Net'] * kWh_to_GJ * 4 * percentage_groene_net_stroom
             df_grouped['Totale winst (€)'] = (df_grouped['Totale HBE Groen'] + df_grouped['Totale HBE Net']) * prijs_HBE
