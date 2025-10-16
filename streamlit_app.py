@@ -58,6 +58,20 @@ if uploaded_file is not None:
     batterij_teruglevering = st.selectbox("Kolom voor batterij teruglevering:", kolommen)
     laadpalen = st.multiselect("Kolommen voor laadpalen:", kolommen)
 
+    # Rendementsfactor (0–100): 0.912 = 91,2% effectief
+    verliesfactor_assets = st.number_input(
+        "Rendement lader + kabels (%)",
+        min_value=0.0,
+        max_value=100.0,
+        value=91.1,       # <-- default
+        step=0.1,
+        format="%.1f",
+        help="Totaalrendement lader + kabels; pas aan indien nodig.",
+    )
+    st.write("Ingevoerde factor:", verliesfactor_assets)
+
+    verliezen_door_assets = verliesfactor_assets / 100.0  # 91,1% -> 0.911
+    
     # Tijd kolom   
     df1 = df[[tijdstip]].copy()
     df[tijdstip] = pd.to_datetime(df[tijdstip], errors='coerce')
@@ -65,6 +79,9 @@ if uploaded_file is not None:
     # Groene stroom en laadpalen sommeren
     df1["Groene_Stroom"] = df[groene_stroom].sum(axis=1) if groene_stroom else 0    
     df1["Laadpalen"] = df[laadpalen].sum(axis=1) if laadpalen else 0
+
+    # Stroom naar laadpalen toe > Stroom uit laadpalen
+    df1["Laadpalen_ev_kWh"] = df1["Laadpalen"] * verliezen_door_assets
 
     # Enkele kolommen toewijzen
     df1["Net_Verbruik"] = df[net_in] if net_in in df.columns else 0
@@ -132,23 +149,12 @@ if uploaded_file is not None:
     - $Aantal\ HBE-O\ voor\ 100\% hernieuwbare\ elektriciteit = omvang\ levering\ in\ kWh\ * 0,0036 * 4$ """)
 
     kWh_to_GJ = 0.0036  # 1 kWh = 0.0036 GigaJoule
+    
     percentage_groene_net_stroom = st.number_input("Vul het percentage groene stroom van het net in:")
     st.write("Het percentage is: ", percentage_groene_net_stroom)
-    prijs_HBE = st.number_input("Vul de prijs van de  HBE's in:")
-    st.write("De HBE prijs is: ", prijs_HBE)
-    # 91,2% rendement → verliesfactor = 0.912 
-    verliesfactor_assets = st.number_input(
-        "Rendement lader + kabels (fractie 0–1)",
-        min_value=0.0,
-        max_value=1.0,
-        value=0.912,      # <-- default
-        step=0.001,
-        format="%.3f",
-        help="Typisch totaalrendement lader + kabels; pas aan indien nodig."
-    )
-    st.write("Ingevoerde factor:", verliesfactor_assets)
 
-    Verliezen_door_assets = verliesfactor_assets # gebruik deze variabele verderop
+    prijs_HBE = st.number_input("Vul de prijs van de  HBE's in:")
+    st.write("De HBE prijs is: ", prijs_HBE) 
 
     percentage_groene_net_stroom = percentage_groene_net_stroom/100
 
@@ -233,8 +239,8 @@ if uploaded_file is not None:
     def calculate_data(option):
         if option == 'Totaal':
             # Berekeningen
-            somkWh = df1['HBE'].sum() * Verliezen_door_assets
-            somkWk_Net = (df1['Laadpalen'].sum() - somkWh) * Verliezen_door_assets
+            somkWh = df1['HBE'].sum() 
+            somkWk_Net = df1['Laadpalen'].sum() - somkWh
             HBE_Groen = somkWh * kWh_to_GJ * 4
             HBE_Net = somkWk_Net * kWh_to_GJ * 4 * percentage_groene_net_stroom   
             Totaal = (HBE_Groen + HBE_Net) * prijs_HBE
@@ -275,8 +281,8 @@ if uploaded_file is not None:
                 df_grouped = df1.resample('M').sum()
 
             # Berekeningen per periode
-            df_grouped['Totale kWh Groen'] = df_grouped['HBE'] * Verliezen_door_assets
-            df_grouped['Totale kWh Net'] = ( df_grouped['Laadpalen'] - df_grouped['HBE'] ) * Verliezen_door_assets
+            df_grouped['Totale kWh Groen'] = df_grouped['HBE'] 
+            df_grouped['Totale kWh Net'] = df_grouped['Laadpalen'] - df_grouped['HBE'] 
             df_grouped['Totale HBE Groen'] = df_grouped['Totale kWh Groen'] * kWh_to_GJ * 4
             df_grouped['Totale HBE Net'] = df_grouped['Totale kWh Net'] * kWh_to_GJ * 4 * percentage_groene_net_stroom
             df_grouped['Totale winst (€)'] = (df_grouped['Totale HBE Groen'] + df_grouped['Totale HBE Net']) * prijs_HBE
