@@ -58,8 +58,7 @@ if uploaded_file is not None:
     batterij_teruglevering = st.selectbox("Kolom voor batterij teruglevering:", kolommen)
     laadpalen = st.multiselect("Kolommen voor laadpalen:", kolommen)
 
-
-    # Rendementsfactor (0–100): 0.912 = 91,2% effectief
+    # Stap 3: Rendementsfactor (0–100): 0.912 = 91,2% effectief
     verliesfactor_assets = st.number_input(
         "Rendement lader + kabels (%)",
         min_value=0.0,
@@ -69,8 +68,6 @@ if uploaded_file is not None:
         format="%.1f",
         help="Totaalrendement lader + kabels; pas aan indien nodig.",
     )
-    st.write("Ingevoerde factor:", verliesfactor_assets)
-
     verliezen_door_assets = verliesfactor_assets / 100.0  # 91,1% -> 0.911
     
     # Tijd kolom   
