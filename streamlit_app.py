@@ -58,6 +58,7 @@ if uploaded_file is not None:
     batterij_teruglevering = st.selectbox("Kolom voor batterij teruglevering:", kolommen)
     laadpalen = st.multiselect("Kolommen voor laadpalen:", kolommen)
 
+
     # Rendementsfactor (0–100): 0.912 = 91,2% effectief
     verliesfactor_assets = st.number_input(
         "Rendement lader + kabels (%)",
@@ -81,7 +82,7 @@ if uploaded_file is not None:
     df1["Laadpalen"] = df[laadpalen].sum(axis=1) if laadpalen else 0
 
     # Stroom naar laadpalen toe > Stroom uit laadpalen
-    df1["Laadpalen_ev_kWh"] = df1["Laadpalen"] * verliezen_door_assets
+    df1["Laadpalen_EV"] = df1["Laadpalen"] * verliezen_door_assets
 
     # Enkele kolommen toewijzen
     df1["Net_Verbruik"] = df[net_in] if net_in in df.columns else 0
@@ -102,7 +103,7 @@ if uploaded_file is not None:
         Verbruik = row["Net_Verbruik"] - row["Batterij_Verbruik"]
         Teruglevering = row["Batterij_Teruglevering"] - row["Net_Teruglevering"]
         GroeneStroom = row["Groene_Stroom"]
-        Laadpalen = row["Laadpalen"]
+        Laadpalen = row["Laadpalen_EV"]
 
         if Verbruik <= 0 and Teruglevering <= 0:
             return GroeneStroom - abs(Verbruik) - abs(Teruglevering) - Laadpalen
@@ -165,7 +166,7 @@ if uploaded_file is not None:
     def calculate_HBEs(row):
         
         groene_stroom = row['Groene_Stroom']
-        laadpalen = row['Laadpalen']
+        laadpalen = row['Laadpalen_EV']
         
         # Directe zonne-energie HBE's
         HBE_direct = min(groene_stroom, laadpalen)
@@ -178,7 +179,7 @@ if uploaded_file is not None:
 
         # Inputwaarden van de rij
         groene_stroom = row['Groene_Stroom']
-        laadpalen = row['Laadpalen']
+        laadpalen = row['Laadpalen_EV']
         batterij_in = row['Batterij_Verbruik']
         batterij_uit = row['Batterij_Teruglevering']
 
@@ -240,7 +241,7 @@ if uploaded_file is not None:
         if option == 'Totaal':
             # Berekeningen
             somkWh = df1['HBE'].sum() 
-            somkWk_Net = df1['Laadpalen'].sum() - somkWh
+            somkWk_Net = df1['Laadpalen_EV'].sum() - somkWh
             HBE_Groen = somkWh * kWh_to_GJ * 4
             HBE_Net = somkWk_Net * kWh_to_GJ * 4 * percentage_groene_net_stroom   
             Totaal = (HBE_Groen + HBE_Net) * prijs_HBE
@@ -282,7 +283,7 @@ if uploaded_file is not None:
 
             # Berekeningen per periode
             df_grouped['Totale kWh Groen'] = df_grouped['HBE'] 
-            df_grouped['Totale kWh Net'] = df_grouped['Laadpalen'] - df_grouped['HBE'] 
+            df_grouped['Totale kWh Net'] = df_grouped['Laadpalen_EV'] - df_grouped['HBE'] 
             df_grouped['Totale HBE Groen'] = df_grouped['Totale kWh Groen'] * kWh_to_GJ * 4
             df_grouped['Totale HBE Net'] = df_grouped['Totale kWh Net'] * kWh_to_GJ * 4 * percentage_groene_net_stroom
             df_grouped['Totale winst (€)'] = (df_grouped['Totale HBE Groen'] + df_grouped['Totale HBE Net']) * prijs_HBE
