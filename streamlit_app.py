@@ -136,9 +136,19 @@ if uploaded_file is not None:
     st.write("Het percentage is: ", percentage_groene_net_stroom)
     prijs_HBE = st.number_input("Vul de prijs van de  HBE's in:")
     st.write("De HBE prijs is: ", prijs_HBE)
+    # 91,2% rendement → verliesfactor = 0.912 
+    verliesfactor_assets = st.number_input(
+        "Rendement lader + kabels (fractie 0–1)",
+        min_value=0.0,
+        max_value=1.0,
+        value=0.912,      # <-- default
+        step=0.001,
+        format="%.3f",
+        help="Typisch totaalrendement lader + kabels; pas aan indien nodig."
+    )
+    st.write("Ingevoerde factor:", verliesfactor_assets)
 
-    # Rendamentverlies lader en kabels zie:Green Planet\Cloud Green Planet - Documenten\01. GPP\2. Gebieden\HBE administratie\2025\Fudura\overvieuw
-    Verliezen_door_assets = 0.912 
+    Verliezen_door_assets = verliesfactor_assets # gebruik deze variabele verderop
 
     percentage_groene_net_stroom = percentage_groene_net_stroom/100
 
