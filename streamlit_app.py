@@ -222,8 +222,8 @@ if uploaded_file is not None:
     def calculate_data(option):
         if option == 'Totaal':
             # Berekeningen
-            somkWh = df1['HBE'].sum()
-            somkWk_Net = (df1['Laadpalen'].sum() - somkWh)
+            somkWh = df1['HBE'].sum() * Verliezen_door_assets
+            somkWk_Net = (df1['Laadpalen'].sum() - somkWh) * Verliezen_door_assets
             HBE_Groen = somkWh * kWh_to_GJ * 4
             HBE_Net = somkWk_Net * kWh_to_GJ * 4 * percentage_groene_net_stroom   
             Totaal = (HBE_Groen + HBE_Net) * prijs_HBE
