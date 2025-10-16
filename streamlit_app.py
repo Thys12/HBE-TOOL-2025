@@ -89,7 +89,7 @@ if uploaded_file is not None:
 
     df1.set_index(tijdstip, inplace=True)
     # Debugging: Toon df1 na toewijzing
-    st.write("# Data na kolomtoewijzing:")
+    st.write("### Data na kolomtoewijzing:")
     df1 = df1.drop(df1.index[-1])
     df1 = df1.drop(df1.index[-1])
     
